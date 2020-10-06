@@ -43,8 +43,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Note.cs" />
+    <Compile Include="NoteLength.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Song.cs" />
+    <Compile Include="SoundFrequency.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
