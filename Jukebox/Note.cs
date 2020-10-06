@@ -1,8 +1,8 @@
 ﻿namespace Jukebox
 {
-    class Note
+    public class Note
     {
         public SoundFrequency Tone { get; set; }
-        public int Length { get; set; }
+        public NoteLength Length { get; set; }
     }
 }

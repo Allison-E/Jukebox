@@ -1,6 +1,6 @@
 ﻿namespace Jukebox
 {
-    class Song
+    public class Song
     {
         public string Title { get; private set; }
         public Note[] Sequence { get; set; }
