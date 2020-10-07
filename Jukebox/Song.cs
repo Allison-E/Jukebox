@@ -2,7 +2,7 @@
 {
     public class Song
     {
-        public string Title { get; private set; }
+        public string Title { get; set; }
         public Note[] Sequence { get; set; }
 
         public Song(string title)

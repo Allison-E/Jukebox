@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using System.Collections.Generic;
 
 namespace Jukebox
 {
@@ -10,72 +12,36 @@ namespace Jukebox
     {
         static void Main(string[] args)
         {
-            Song Mary = new Song("Mary had a little lamb")
+            List<Song> songs = new List<Song>();
+            Task readSongsAsync = Task.Run(() =>
             {
-                Sequence = new Note[] {
-                new Note { Tone = SoundFrequency.E4, Length = NoteLength.Quaver },
-                new Note { Tone = SoundFrequency.D4, Length = NoteLength.Quaver },
-                new Note { Tone = SoundFrequency.C4, Length = NoteLength.Quaver },
-                new Note { Tone = SoundFrequency.D4, Length = NoteLength.Quaver },
-                new Note { Tone = SoundFrequency.E4, Length = NoteLength.Quaver },
-                new Note { Tone = SoundFrequency.E4, Length = NoteLength.Quaver },
-                new Note { Tone = SoundFrequency.E4, Length = NoteLength.Crotchet },
-                new Note { Tone = SoundFrequency.D4, Length = NoteLength.Quaver },
-                new Note { Tone = SoundFrequency.D4, Length = NoteLength.Quaver },
-                new Note { Tone = SoundFrequency.D4, Length = NoteLength.Crotchet },
-                new Note { Tone = SoundFrequency.E4, Length = NoteLength.Quaver },
-                new Note { Tone = SoundFrequency.G4, Length = NoteLength.Quaver },
-                new Note { Tone = SoundFrequency.G4, Length = NoteLength.Crotchet },
-                new Note { Tone = SoundFrequency.E4, Length = NoteLength.Quaver },
-                new Note { Tone = SoundFrequency.D4, Length = NoteLength.Quaver },
-                new Note { Tone = SoundFrequency.C4, Length = NoteLength.Quaver },
-                new Note { Tone = SoundFrequency.D4, Length = NoteLength.Quaver },
-                new Note { Tone = SoundFrequency.E4, Length = NoteLength.Quaver },
-                new Note { Tone = SoundFrequency.E4, Length = NoteLength.Quaver },
-                new Note { Tone = SoundFrequency.E4, Length = NoteLength.Quaver },
-                new Note { Tone = SoundFrequency.E4, Length = NoteLength.Quaver },
-                new Note { Tone = SoundFrequency.D4, Length = NoteLength.Quaver },
-                new Note { Tone = SoundFrequency.D4, Length = NoteLength.Quaver },
-                new Note { Tone = SoundFrequency.E4, Length = NoteLength.Quaver },
-                new Note { Tone = SoundFrequency.D4, Length = NoteLength.Quaver },
-                new Note { Tone = SoundFrequency.C4, Length = NoteLength.Crotchet }
-                }
-            };
+                string path = Environment.CurrentDirectory + @"\Songs.json";
+                JsonSerializer serialiser = new JsonSerializer();
 
-            Song birthday = new Song("Happy birthday to you")
+                using (StreamReader stream = new StreamReader(path))
+                using (JsonReader reader = new JsonTextReader(stream))
+                {
+                    songs = serialiser.Deserialize<List<Song>>(reader);
+                }
+            });
+
+            Console.Title = "Console Jukebox";
+            Console.WriteLine("Welcome to my Console Jukebox");
+            Console.WriteLine("Loading songs...");
+
+            Task.WaitAll(readSongsAsync);
+            if (readSongsAsync.IsCompleted)
             {
-                Sequence = new Note[] {
-                new Note { Tone = SoundFrequency.G3, Length = NoteLength.Quaver },
-                new Note { Tone = SoundFrequency.G3, Length = NoteLength.Quaver },
-                new Note { Tone = SoundFrequency.A3, Length = NoteLength.Crotchet },
-                new Note { Tone = SoundFrequency.G3, Length = NoteLength.Crotchet },
-                new Note { Tone = SoundFrequency.C4, Length = NoteLength.Crotchet },
-                new Note { Tone = SoundFrequency.B3, Length = NoteLength.Minim },
-                new Note { Tone = SoundFrequency.G3, Length = NoteLength.Quaver },
-                new Note { Tone = SoundFrequency.G3, Length = NoteLength.Quaver },
-                new Note { Tone = SoundFrequency.A3, Length = NoteLength.Crotchet },
-                new Note { Tone = SoundFrequency.G3, Length = NoteLength.Crotchet },
-                new Note { Tone = SoundFrequency.D4, Length = NoteLength.Crotchet },
-                new Note { Tone = SoundFrequency.C4, Length = NoteLength.Minim },
-                new Note { Tone = SoundFrequency.G3, Length = NoteLength.Quaver },
-                new Note { Tone = SoundFrequency.G3, Length = NoteLength.Quaver },
-                new Note { Tone = SoundFrequency.G4, Length = NoteLength.Crotchet },
-                new Note { Tone = SoundFrequency.E4, Length = NoteLength.Crotchet },
-                new Note { Tone = SoundFrequency.C4, Length = NoteLength.Quaver },
-                new Note { Tone = SoundFrequency.C4, Length = NoteLength.Quaver },
-                new Note { Tone = SoundFrequency.B3, Length = NoteLength.Crotchet },
-                new Note { Tone = SoundFrequency.A3, Length = NoteLength.Crotchet },
-                new Note { Tone = SoundFrequency.F4, Length = NoteLength.Quaver },
-                new Note { Tone = SoundFrequency.F4, Length = NoteLength.Quaver },
-                new Note { Tone = SoundFrequency.E4, Length = NoteLength.Crotchet },
-                new Note { Tone = SoundFrequency.C4, Length = NoteLength.Crotchet },
-                new Note { Tone = SoundFrequency.D4, Length = NoteLength.Crotchet },
-                new Note { Tone = SoundFrequency.C4, Length = NoteLength.Minim },
-                }
-            };
-
-            Play(Mary);
-            Play(birthday);
+                ConsoleColor DEFAULT = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
+                Console.WriteLine("Done Loading");
+                Console.ForegroundColor = DEFAULT;
+            }
+                        
+            foreach (Song song in songs)
+            {
+                Play(song);
+            }
         }
 
         static void Play(Song song)
