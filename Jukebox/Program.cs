@@ -10,6 +10,8 @@ namespace Jukebox
 {
     class Program
     {
+        static int number = 0;
+        
         static void Main(string[] args)
         {
             List<Song> songs = new List<Song>();
@@ -25,22 +27,41 @@ namespace Jukebox
                 }
             });
 
+            System.Timers.Timer timer = new System.Timers.Timer(1000);
+            timer.Elapsed += Timer_Elapsed;
+            Console.CursorVisible = false;
             Console.Title = "Console Jukebox";
             Console.WriteLine("Welcome to my Console Jukebox");
-            Console.WriteLine("Loading songs...");
+            Console.Write("Loading songs.");
+            timer.Start();
 
             Task.WaitAll(readSongsAsync);
             if (readSongsAsync.IsCompleted)
             {
+                timer.Stop();
                 ConsoleColor DEFAULT = Console.ForegroundColor;
                 Console.ForegroundColor = ConsoleColor.DarkGreen;
-                Console.WriteLine("Done Loading");
+                Console.WriteLine("\nDone Loading");
                 Console.ForegroundColor = DEFAULT;
             }
                         
             foreach (Song song in songs)
             {
                 Play(song);
+            }
+        }
+
+        private static void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            number++;
+            if (number % 3 != 0)
+            {
+                Console.Write(".");
+            }
+            else
+            {
+                Console.Write("\b \b");
+                Console.Write("\b \b");
             }
         }
 
